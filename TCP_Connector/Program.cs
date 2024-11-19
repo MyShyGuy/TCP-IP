@@ -2,6 +2,8 @@
 using System.Security.Cryptography.X509Certificates;
 using TCP_Connector;
 
+#pragma warning disable CS1998
+
 class Programm
 {
     static async Task Main(String[] args)
