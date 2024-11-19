@@ -36,7 +36,7 @@ namespace TCPIP_Chat
                 // Warte auf neuen Client
                 TcpClient client = await _tcpListener.AcceptTcpClientAsync();
                 _clientCounter++;
-                Console.WriteLine($"Client {_clientCounter} connected!");
+                Console.WriteLine($"{DateTimeOffset.Now} Client {_clientCounter} connected!");
 
                 // Starte einen separaten Task für den Client
                 _ = HandleClientAsync(client, _clientCounter);
@@ -55,7 +55,8 @@ namespace TCPIP_Chat
                 while ((readTotal = await tcpStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
                 {
                     string receivedMessage = Encoding.UTF8.GetString(buffer, 0, readTotal);
-                    Console.WriteLine($"Client {clientId}: {receivedMessage}");
+                    TimeOnly currenttime = TimeOnly.FromDateTime(DateTime.Now);
+                    Console.WriteLine($"{currenttime} Client {clientId}: {receivedMessage}");
 
                     // Option: Sende eine Antwort zurück
                     string response = $"Server received: {receivedMessage}";
@@ -74,61 +75,4 @@ namespace TCPIP_Chat
             }
         }
     }
-
-
-
-
-
-
-
-
-    /*     public class TCPServer
-        {
-            string? recivedMessage;
-            private TcpListener? _tcpListener;
-
-            private int _clientCounter = 0;
-
-            public TCPServer()
-            {
-                StartServer();
-            }
-
-            private async Task StartServer()
-            {
-                var port = 13000;
-                var hostAddress = IPAddress.Parse("127.0.0.1");
-                _tcpListener = new TcpListener(hostAddress, port);
-                _tcpListener.Start();
-
-                byte[] buffer = new byte[1024];
-
-                using TcpClient client = await _tcpListener.AcceptTcpClientAsync();
-                _clientCounter++;
-
-                var tcpStream = client.GetStream();
-
-                int readTotal;
-
-                while ((readTotal = await tcpStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
-                {
-                    recivedMessage = Encoding.UTF8.GetString(buffer, 0, readTotal);
-                    showMessage();
-                }
-            }
-
-                    public async Task CheckForNewClient()
-                    {
-                        using TcpClient client = await _tcpListener.AcceptTcpClientAsync();
-                    } 
-
-            public void showMessage()
-            {
-                if (recivedMessage != null)
-                {
-                    System.Console.WriteLine($"Time: {DateTimeOffset.Now} \t | \t Message:" + recivedMessage);
-                    recivedMessage = null;
-                }
-            }
-        } */
 }

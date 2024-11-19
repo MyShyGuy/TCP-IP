@@ -45,7 +45,6 @@ class Programm
             }
             //await serverlink.reciveMSG(client);
             isValid = false;
-
         }
     }
 }
