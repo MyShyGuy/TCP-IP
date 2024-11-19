@@ -36,7 +36,7 @@ class Programm
                     serverlink.sendMSG(Input, client);
                     isValid = true;
                 }
-                else if (Input == "x")
+                if (Input == "x")
                 {
                     client.Close();
                     isConnected = client.Connected;

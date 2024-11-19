@@ -46,3 +46,4 @@ C:\Users\matthias.schober\OneDrive - uat.at\Dokumente\Mycode\TCP-IP\TCPIP-Chat\T
 C:\Users\matthias.schober\OneDrive - uat.at\Dokumente\Mycode\TCP-IP\TCPIP-Chat\TCPIP_Chat\obj\Debug\net8.0\TCPIP_Chat.pdb
 C:\Users\matthias.schober\OneDrive - uat.at\Dokumente\Mycode\TCP-IP\TCPIP-Chat\TCPIP_Chat\obj\Debug\net8.0\TCPIP_Chat.genruntimeconfig.cache
 C:\Users\matthias.schober\OneDrive - uat.at\Dokumente\Mycode\TCP-IP\TCPIP-Chat\TCPIP_Chat\obj\Debug\net8.0\ref\TCPIP_Chat.dll
+C:\Users\matthias.schober\OneDrive - uat.at\Dokumente\Mycode\TCP-IP\TCPIP-Chat\TCPIP_Chat\obj\Debug\net8.0\TCPIP_Chat.sourcelink.json

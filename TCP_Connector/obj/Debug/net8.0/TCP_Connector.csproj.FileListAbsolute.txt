@@ -12,3 +12,4 @@ C:\Users\matthias.schober\OneDrive - uat.at\Dokumente\Mycode\TCP-IP\TCP_Connecto
 C:\Users\matthias.schober\OneDrive - uat.at\Dokumente\Mycode\TCP-IP\TCP_Connector\obj\Debug\net8.0\TCP_Connector.pdb
 C:\Users\matthias.schober\OneDrive - uat.at\Dokumente\Mycode\TCP-IP\TCP_Connector\obj\Debug\net8.0\TCP_Connector.genruntimeconfig.cache
 C:\Users\matthias.schober\OneDrive - uat.at\Dokumente\Mycode\TCP-IP\TCP_Connector\obj\Debug\net8.0\ref\TCP_Connector.dll
+C:\Users\matthias.schober\OneDrive - uat.at\Dokumente\Mycode\TCP-IP\TCP_Connector\obj\Debug\net8.0\TCP_Connector.sourcelink.json
