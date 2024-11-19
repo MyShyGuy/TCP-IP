@@ -18,7 +18,7 @@ public class TcpLink
 
     }
 
-    public void sendMSG(string msg, TcpClient client)
+    public async void sendMSG(string msg, TcpClient client)
     {
         try
         {
@@ -28,7 +28,7 @@ public class TcpLink
             // Optional: Daten an den Server senden
             string message = msg;
             byte[] dataToSend = Encoding.UTF8.GetBytes(message);
-            stream.Write(dataToSend, 0, dataToSend.Length);
+            await stream.WriteAsync(dataToSend, 0, dataToSend.Length);
             //Console.WriteLine("Nachricht gesendet: " + message);
         }
         catch (Exception)

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TCPIP_Chat")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a788c22af76691777a39a69e143acf8a3ea47bac")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d886b10bd6fad9ab9217578ae903104e676bed2f")]
 [assembly: System.Reflection.AssemblyProductAttribute("TCPIP_Chat")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TCPIP_Chat")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

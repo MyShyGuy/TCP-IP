@@ -65,7 +65,7 @@ namespace TCPIP_Chat
                     TimeOnly currenttime = TimeOnly.FromDateTime(DateTime.Now);
                     Console.WriteLine($"{currenttime} Client {clientId}: {receivedMessage}");
 
-                    await BroadcastMessageAsync($"Client {clientId}: {receivedMessage}");
+                    await BroadcastMessageAsync($"Client {clientId}: {receivedMessage}", client);
 
                     /* // Option: Sende eine Antwort zurück
                     string response = $"Server received: {receivedMessage}";
@@ -85,7 +85,7 @@ namespace TCPIP_Chat
         }
 
 
-        private async Task BroadcastMessageAsync(string message)
+        private async Task BroadcastMessageAsync(string message, TcpClient senderClient)
         {
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
 
@@ -93,7 +93,7 @@ namespace TCPIP_Chat
             {
                 foreach (var client in _connectedClients)
                 {
-                    if (client.Connected)
+                    if (client != senderClient && client.Connected)
                     {
                         try
                         {

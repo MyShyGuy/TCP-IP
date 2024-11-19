@@ -49,6 +49,7 @@ class Programm
         catch (Exception ex)
         {
             System.Console.WriteLine($"Error: {ex.Message}");
+            Console.ReadKey();
         }
     }
 }
