@@ -87,5 +87,35 @@ namespace TCP_Connector
             }
             return input;
         }
+
+        public static string PromptForHiddenInput(string promptMessage)
+        {
+            Console.Write(promptMessage);
+            string input = string.Empty;
+            ConsoleKeyInfo key;
+
+            do
+            {
+                key = Console.ReadKey(intercept: true); // Eingabe wird nicht in der Konsole angezeigt
+
+                if (key.Key == ConsoleKey.Backspace && input.Length > 0)
+                {
+                    // Bei Backspace das letzte Zeichen entfernen
+                    input = input[..^1];
+                    Console.Write("\b \b"); // Überschreibt das letzte Zeichen in der Konsole
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    // Gültiges Zeichen zur Eingabe hinzufügen
+                    input += key.KeyChar;
+                    Console.Write("*"); // Sternchen anzeigen
+                }
+
+            } while (key.Key != ConsoleKey.Enter); // Eingabe endet mit Enter
+
+            Console.WriteLine(); // Gehe zur nächsten Zeile
+            return input;
+        }
+
     }
 }

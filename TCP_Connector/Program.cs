@@ -11,10 +11,8 @@ class Programm
         User clientUser = new User();
         User.DisplayWelcomeMessage();
         clientUser.SetName(User.PromptForInput("Username: "));
-        clientUser.setPassword(User.PromptForInput("Password: "));
-
-
-
+        clientUser.setPassword(User.PromptForHiddenInput("Password: "));
+        clientUser.ShowUser();
 
         try
         {
