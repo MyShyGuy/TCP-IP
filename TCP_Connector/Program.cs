@@ -8,6 +8,14 @@ class Programm
 {
     static async Task Main(String[] args)
     {
+        User clientUser = new User();
+        User.DisplayWelcomeMessage();
+        clientUser.SetName(User.PromptForInput("Username: "));
+        clientUser.setPassword(User.PromptForInput("Password: "));
+
+
+
+
         try
         {
 
