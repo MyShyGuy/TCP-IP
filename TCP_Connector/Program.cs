@@ -12,7 +12,7 @@ class Programm
         User.DisplayWelcomeMessage();
         clientUser.SetName(User.PromptForInput("Username: "));
         clientUser.setPassword(User.PromptForHiddenInput("Password: "));
-        clientUser.ShowUser();
+        //clientUser.ShowUser();
 
         try
         {
@@ -32,12 +32,19 @@ class Programm
 
 
             System.Console.WriteLine("Verbinde mit: " + serverIp);
+            System.Console.WriteLine("Logging in.....");
+            serverlink.sendMSG(clientUser.name, client);
+
+
             System.Console.WriteLine("Bitte geben sie ihren ersten command ein:");
 
             while (isConnected)
             {
                 while (!isValid)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    System.Console.Write($"{clientUser.name}: ");
+                    Console.ResetColor();
                     Input = Console.ReadLine();
                     if (Input != null)
                     {

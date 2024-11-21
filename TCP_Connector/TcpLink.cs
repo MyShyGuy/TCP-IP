@@ -57,7 +57,9 @@ public class TcpLink
 
                 // Konvertiere die gelesenen Bytes in einen String und gebe sie aus
                 string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine(response);
+                Console.ResetColor();
             }
         }
         catch (Exception ex)

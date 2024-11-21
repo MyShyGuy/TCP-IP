@@ -18,6 +18,8 @@ namespace TCPIP_Chat
         private readonly List<TcpClient> _connectedClients = new List<TcpClient>(); // liste für verbundene clients
         private readonly object _lock = new object(); //Lock damit falls mehrere async tasks versuchen auf die gleichen sachen zuzugreifen wird dieses unterbunden.
 
+        private readonly Dictionary<string, TcpClient> _loggedInUsers = new Dictionary<string, TcpClient>();
+
         public TCPServer()
         {
             StartServer();
@@ -40,17 +42,39 @@ namespace TCPIP_Chat
                 _clientCounter++;
                 Console.WriteLine($"{DateTimeOffset.Now} Client {_clientCounter} connected!");
 
-                lock (_lock)
+                int readUserName;
+                var tcpStream = client.GetStream();
+                byte[] buffer = new byte[1024];
+                string userName = "Anonymus";
+
+                if ((readUserName = await tcpStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
                 {
-                    _connectedClients.Add(client);
+                    userName = Encoding.UTF8.GetString(buffer, 0, readUserName);
+                    TimeOnly currenttime = TimeOnly.FromDateTime(DateTime.Now);
+                    Console.WriteLine($"{currenttime} Client {userName}: connected");
+
+                    await BroadcastMessageAsync($"Client {userName}: connected", client);
+
+                    /* // Option: Sende eine Antwort zurück
+                    string response = $"Server received: {receivedMessage}";
+                    byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+                    await tcpStream.WriteAsync(responseBytes, 0, responseBytes.Length); */
+
+
+                    lock (_lock)
+                    {
+                        _connectedClients.Add(client);
+                        _loggedInUsers.Add(userName, client);
+                    }
+
                 }
 
                 // Starte einen separaten Task für den Client
-                _ = HandleClientAsync(client, _clientCounter);
+                _ = HandleClientAsync(client, _clientCounter, userName);
             }
         }
 
-        private async Task HandleClientAsync(TcpClient client, int clientId)
+        private async Task HandleClientAsync(TcpClient client, int clientId, string clientName)
         {
             byte[] buffer = new byte[1024];
 
@@ -63,14 +87,9 @@ namespace TCPIP_Chat
                 {
                     string receivedMessage = Encoding.UTF8.GetString(buffer, 0, readTotal);
                     TimeOnly currenttime = TimeOnly.FromDateTime(DateTime.Now);
-                    Console.WriteLine($"{currenttime} Client {clientId}: {receivedMessage}");
+                    Console.WriteLine($"{currenttime} Client {clientId} {clientName}: {receivedMessage}");
 
-                    await BroadcastMessageAsync($"Client {clientId}: {receivedMessage}", client);
-
-                    /* // Option: Sende eine Antwort zurück
-                    string response = $"Server received: {receivedMessage}";
-                    byte[] responseBytes = Encoding.UTF8.GetBytes(response);
-                    await tcpStream.WriteAsync(responseBytes, 0, responseBytes.Length); */
+                    await BroadcastMessageAsync($"{clientName}: {receivedMessage}", client);
                 }
             }
             catch (Exception ex)
