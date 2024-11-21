@@ -42,12 +42,12 @@ class Programm
             {
                 while (!isValid)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    System.Console.Write($"{clientUser.name}: ");
-                    Console.ResetColor();
                     Input = Console.ReadLine();
                     if (Input != null)
                     {
+                        /* Console.ForegroundColor = ConsoleColor.Red;
+                        System.Console.Write($"{clientUser.name}: ");
+                        Console.ResetColor(); */
                         serverlink.sendMSG(Input, client);
                         isValid = true;
                     }
