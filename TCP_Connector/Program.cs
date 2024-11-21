@@ -1,51 +1,57 @@
-﻿
-
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using TCP_Connector;
+
+#pragma warning disable CS1998
 
 class Programm
 {
     static async Task Main(String[] args)
     {
-        string? Input;
-        bool isValid = false;
-        string serverIp = "127.0.0.1";
-        int port = 13000;
-
-        TcpLink serverlink = new TcpLink(serverIp, port);
-        TcpClient client = new TcpClient(serverIp, port);
-        bool isConnected = client.Connected;
-        // Erstelle einen neuen TcpClient und verbinde ihn mit dem Server
-
-        System.Console.WriteLine("Verbinde mit: " + serverIp);
-
-        /*         await serverlink.reciveMSG(client);
-                await serverlink.reciveMSG(client);
-                await serverlink.reciveMSG(client); */
-
-        System.Console.WriteLine("Bitte geben sie ihren ersten command ein:");
-
-        while (isConnected)
+        try
         {
-            while (!isValid)
+
+            string? Input;
+            bool isValid = false;
+            string serverIp = "127.0.0.1";
+            int port = 13000;
+
+            // Erstelle einen neuen TcpClient und verbinde ihn mit dem Server
+            TcpLink serverlink = new TcpLink(serverIp, port);
+            TcpClient client = new TcpClient(serverIp, port);
+            NetworkStream stream = client.GetStream();
+            bool isConnected = client.Connected;
+
+            Task readTask = Task.Run(() => TcpLink.MsgReadAsync(stream));
+
+
+            System.Console.WriteLine("Verbinde mit: " + serverIp);
+            System.Console.WriteLine("Bitte geben sie ihren ersten command ein:");
+
+            while (isConnected)
             {
-                Input = Console.ReadLine();
-                if (Input != null)
+                while (!isValid)
                 {
-                    serverlink.sendMSG(Input, client);
-                    isValid = true;
-                }
-                else if (Input == "x")
-                {
-                    client.Close();
-                    isConnected = client.Connected;
-                }
+                    Input = Console.ReadLine();
+                    if (Input != null)
+                    {
+                        serverlink.sendMSG(Input, client);
+                        isValid = true;
+                    }
+                    if (Input == "x")
+                    {
+                        client.Close();
+                        isConnected = client.Connected;
+                    }
 
+                }
+                isValid = false;
             }
-            //await serverlink.reciveMSG(client);
-            isValid = false;
-
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Error: {ex.Message}");
+            Console.ReadKey();
         }
     }
 }

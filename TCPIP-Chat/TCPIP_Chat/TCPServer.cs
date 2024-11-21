@@ -9,12 +9,14 @@ using System.Threading.Tasks;
 
 namespace TCPIP_Chat
 {
+
+
     public class TCPServer
     {
-        string? recivedMessage;
         private TcpListener? _tcpListener;
-
         private int _clientCounter = 0;
+        private readonly List<TcpClient> _connectedClients = new List<TcpClient>(); // liste für verbundene clients
+        private readonly object _lock = new object(); //Lock damit falls mehrere async tasks versuchen auf die gleichen sachen zuzugreifen wird dieses unterbunden.
 
         public TCPServer()
         {
@@ -28,33 +30,82 @@ namespace TCPIP_Chat
             _tcpListener = new TcpListener(hostAddress, port);
             _tcpListener.Start();
 
-            byte[] buffer = new byte[1024];
+            Console.WriteLine($"Server started on {hostAddress}:{port}");
+            Console.WriteLine("Waiting for clients...");
 
-            using TcpClient client = await _tcpListener.AcceptTcpClientAsync();
-            _clientCounter++;
-
-            var tcpStream = client.GetStream();
-
-            int readTotal;
-
-            while ((readTotal = await tcpStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+            while (true)
             {
-                recivedMessage = Encoding.UTF8.GetString(buffer, 0, readTotal);
-                showMessage();
+                // Warte auf neuen Client
+                TcpClient client = await _tcpListener.AcceptTcpClientAsync();
+                _clientCounter++;
+                Console.WriteLine($"{DateTimeOffset.Now} Client {_clientCounter} connected!");
+
+                lock (_lock)
+                {
+                    _connectedClients.Add(client);
+                }
+
+                // Starte einen separaten Task für den Client
+                _ = HandleClientAsync(client, _clientCounter);
             }
         }
 
-        /*         public async Task CheckForNewClient()
-                {
-                    using TcpClient client = await _tcpListener.AcceptTcpClientAsync();
-                } */
-
-        public void showMessage()
+        private async Task HandleClientAsync(TcpClient client, int clientId)
         {
-            if (recivedMessage != null)
+            byte[] buffer = new byte[1024];
+
+            try
             {
-                System.Console.WriteLine($"Time: {DateTimeOffset.Now} \t | \t Message:" + recivedMessage);
-                recivedMessage = null;
+                var tcpStream = client.GetStream();
+                int readTotal;
+
+                while ((readTotal = await tcpStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                {
+                    string receivedMessage = Encoding.UTF8.GetString(buffer, 0, readTotal);
+                    TimeOnly currenttime = TimeOnly.FromDateTime(DateTime.Now);
+                    Console.WriteLine($"{currenttime} Client {clientId}: {receivedMessage}");
+
+                    await BroadcastMessageAsync($"Client {clientId}: {receivedMessage}", client);
+
+                    /* // Option: Sende eine Antwort zurück
+                    string response = $"Server received: {receivedMessage}";
+                    byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+                    await tcpStream.WriteAsync(responseBytes, 0, responseBytes.Length); */
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error with client {clientId}: {ex.Message}");
+            }
+            finally
+            {
+                Console.WriteLine($"Client {clientId} disconnected.");
+                client.Close();
+            }
+        }
+
+
+        private async Task BroadcastMessageAsync(string message, TcpClient senderClient)
+        {
+            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+
+            lock (_lock)
+            {
+                foreach (var client in _connectedClients)
+                {
+                    if (client != senderClient && client.Connected)
+                    {
+                        try
+                        {
+                            var stream = client.GetStream();
+                            stream.WriteAsync(messageBytes, 0, messageBytes.Length);
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Console.WriteLine($"Error broadcasting to client: {ex.Message}");
+                        }
+                    }
+                }
             }
         }
     }

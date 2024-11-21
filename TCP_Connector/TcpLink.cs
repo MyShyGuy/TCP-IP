@@ -18,22 +18,7 @@ public class TcpLink
 
     }
 
-    public async Task reciveMSG(TcpClient client)
-    {
-        try
-        {
-            // Hole den Netzwerkstream des Clients
-            NetworkStream stream = client.GetStream();
-
-            await MeReadAsync(stream);
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-
-    public void sendMSG(string msg, TcpClient client)
+    public async void sendMSG(string msg, TcpClient client)
     {
         try
         {
@@ -43,8 +28,8 @@ public class TcpLink
             // Optional: Daten an den Server senden
             string message = msg;
             byte[] dataToSend = Encoding.UTF8.GetBytes(message);
-            stream.Write(dataToSend, 0, dataToSend.Length);
-            Console.WriteLine("Nachricht gesendet: " + message);
+            await stream.WriteAsync(dataToSend, 0, dataToSend.Length);
+            //Console.WriteLine("Nachricht gesendet: " + message);
         }
         catch (Exception)
         {
@@ -53,15 +38,31 @@ public class TcpLink
     }
 
     // Asynchrone Methode zum Lesen und Schreiben von Daten
-    static async Task MeReadAsync(NetworkStream stream)
+    public static async Task MsgReadAsync(NetworkStream stream)
     {
-
-        // Daten vom Server asynchron lesen
         byte[] buffer = new byte[1024];
-        int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
 
-        // Konvertiere die gelesenen Bytes in einen String und gebe sie aus
-        string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-        Console.WriteLine("Empfangene Daten: " + response);
+        try
+        {
+            while (true)
+            {
+                // Daten vom Server asynchron lesen
+                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+
+                if (bytesRead == 0)
+                {
+                    System.Console.WriteLine("Verbindung zum server wurde geschlossen.");
+                    break;
+                }
+
+                // Konvertiere die gelesenen Bytes in einen String und gebe sie aus
+                string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                Console.WriteLine(response);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Error: {ex.Message}");
+        }
     }
 }
